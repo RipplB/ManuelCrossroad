@@ -7,6 +7,7 @@ import jason.environment.*;
 import jason.asSyntax.parser.*;
 import jason.runtime.Settings;
 
+import java.rmi.RemoteException;
 import java.util.Random;
 import java.util.logging.*;
 
@@ -25,7 +26,7 @@ public class Env extends Environment {
     public boolean executeAction(String agName, Structure action) {
         if (action.equals(Literal.parseLiteral("createCar(pls)"))) {
             createCar();
-        } else if (action.equals(Literal.parseLiteral("start"))) {
+        } else if (action.getFunctor().equals("start")) {
             createCar();
         } else {
             logger.info(() -> String.format("executing: %s, but not implemented!", action));
