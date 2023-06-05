@@ -23,24 +23,24 @@ class IntersectModel extends GridWorldModel {
 
         //set Lamps
         //side 0 (TOP)
+        this.set(RED,LaneLength,LaneLength-1 );
         this.set(RED,LaneLength+1,LaneLength-1 );
         this.set(RED,LaneLength+2,LaneLength-1 );
-        this.set(RED,LaneLength+3,LaneLength-1 );
 
         //side 1 (RIGHT)
-        this.set(RED,LaneLength+7,LaneLength+1 );
-        this.set(RED,LaneLength+7,LaneLength+2 );
-        this.set(RED,LaneLength+7,LaneLength+3 );
+        this.set(RED,LaneLength+6,LaneLength );
+        this.set(RED,LaneLength+6,LaneLength+1 );
+        this.set(RED,LaneLength+6,LaneLength+2 );
 
         //side 2 (BOTTOM)
-        this.set(RED,LaneLength+4,LaneLength+7 );
-        this.set(RED,LaneLength+5,LaneLength+7 );
-        this.set(RED,LaneLength+6,LaneLength+7 );
+        this.set(RED,LaneLength+3,LaneLength+6 );
+        this.set(RED,LaneLength+4,LaneLength+6 );
+        this.set(RED,LaneLength+5,LaneLength+6 );
 
         //side 3 (LEFT)
+        this.set(RED,LaneLength-1 ,LaneLength+3 );
         this.set(RED,LaneLength-1 ,LaneLength+4 );
         this.set(RED,LaneLength-1 ,LaneLength+5 );
-        this.set(RED,LaneLength-1 ,LaneLength+6 );
 
 
         //setWalls
@@ -48,10 +48,10 @@ class IntersectModel extends GridWorldModel {
         this.addWall(0,0,LaneLength-1,LaneLength-1);
 
         //top right
-        this.addWall(0,LaneLength+6,LaneLength-1,2*LaneLength+5);
+        this.addWall(LaneLength+6,0, 2*LaneLength+5,LaneLength-1);
 
         //bottom left
-        this.addWall(LaneLength+6,LaneLength-1,0,2*LaneLength+5);
+        this.addWall(0,LaneLength+6,LaneLength-1,2*LaneLength+5);
 
         //bottom right
         this.addWall(LaneLength+6,LaneLength+6,2*LaneLength+5,2*LaneLength+5);
