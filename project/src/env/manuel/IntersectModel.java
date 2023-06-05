@@ -15,7 +15,7 @@ class IntersectModel extends GridWorldModel {
 
     Random random = new Random(System.currentTimeMillis());
 
-    private IntersectModel() {
+    IntersectModel() {
         super(46, 46, 20);
         // setAgPos(0,0,0);
 

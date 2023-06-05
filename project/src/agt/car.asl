@@ -4,7 +4,7 @@
                 //and distance is measured from the start
 //target(3).  //where this car wants to go. (side) where side is the same as above
 
-!init.
+!proceed.
 
 
 desired_lane(TargetLane)
@@ -22,19 +22,26 @@ desired_lane(TargetLane)
 desired_lane(TargetLane)
 :- (TargetLane = 2).
 
-+!init:
-        .random(SideSeed) & Side = ((30 * SideSeed) div 10) &
-        .random(LaneSeed) & Lane = ((20 * LaneSeed) div 10) &
-        .random(TargetSeed) & Target = ((30 * TargetSeed) div 10) &
-        Target \== Side
-    <-  -+pos(Side, Lane, 0);
-        -+target(Target);
-        !test.
+// +!init:
+//         .random(SideSeed) & Side = ((30 * SideSeed) div 10) &
+//         .random(LaneSeed) & Lane = ((20 * LaneSeed) div 10) &
+//         .random(TargetSeed) & Target = ((30 * TargetSeed) div 10) &
+//         Target \== Side
+//     <-  -+pos(Side, Lane, 0);
+//         -+target(Target);
+//         !test.
 
-+!init: true <- !init.
+// +!init: true <- !init.
 
 +!test : pos(Side, Lane, Dist) & desired_lane(NewLane) & target(Target)
     <-  .print("Reeval pos from (", Side, ", ", Lane, ", ", Dist, ") when target is ", Target);
         -+pos(Side, NewLane, Dist);
+        move(Side, NewLane, Dist);
         .print("New lane: ", NewLane);
         createCar(pls).
+
++!proceed : pos(Side, Lane, Dist) & NextDist = Dist + 1 //& desired_lane(Lane)
+    <-  .print("Moving forwards from (", Side, ", ", Lane, ", ", Dist, ")");
+        move(Side, Lane, NextDist);
+        .print("New pos (", Side, ", ", Lane, ", ", NextDist, ")");
+        !proceed.
