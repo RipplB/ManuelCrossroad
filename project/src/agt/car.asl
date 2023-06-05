@@ -12,16 +12,24 @@ desired_lane(TargetLane)
 :- pos(CurrentSide, _, _) & target(Target) & ((CurrentSide + Target) mod 2 == 0) & (TargetLane = 1).
 
 desired_lane(TargetLane)
-:- pos(0, Lane, _) & target(3) & (TargetLane = 2).
+:- pos(0, _, _) & target(1) & (TargetLane = 0).
+desired_lane(TargetLane)
+:- pos(0, _, _) & target(3) & (TargetLane = 2).
 
 desired_lane(TargetLane)
-:- pos(CurrentSide, _, _) & target(Target) & ((CurrentSide + Target) mod 2 \== 0) & (Target > CurrentSide) & (TargetLane = 0).
+:- pos(1, _, _) & target(2) & (TargetLane = 0).
+desired_lane(TargetLane)
+:- pos(1, _, _) & target(0) & (TargetLane = 2).
+
+desired_lane(TargetLane)
+:- pos(2, _, _) & target(3) & (TargetLane = 0).
+desired_lane(TargetLane)
+:- pos(2, _, _) & target(1) & (TargetLane = 2).
 
 desired_lane(TargetLane)
 :- pos(3, _, _) & target(0) & (TargetLane = 0).
-
 desired_lane(TargetLane)
-:- pos(CurrentSide, _, _) & target(Target) & ((CurrentSide + Target) mod 2 \== 0) & (Target < CurrentSide) & (TargetLane = 2).
+:- pos(3, _, _) & target(2) & (TargetLane = 2).
 
 next_lane(TargetLane)
 :- desired_lane(DesiredLane) & pos(_, Lane, _) & DesiredLane \== Lane & ((DesiredLane + Lane) mod 2 == 0) & TargetLane = 1.
@@ -57,7 +65,7 @@ next_lane(TargetLane)
         -+pos(Side, DesiredLane, Dist);
         !proceed.
 
-+!proceed : pos(Side, Lane, Dist) & NextDist = Dist + 1 & not car(Side, Lane, NextDist)
++!proceed : pos(Side, Lane, Dist) & next_lane(Lane) & NextDist = Dist + 1 & not car(Side, Lane, NextDist)
     <-  .print("Moving forwards from (", Side, ", ", Lane, ", ", Dist, ") to ", NextDist);
         move(Side, Lane, NextDist);
         .print("New pos (", Side, ", ", Lane, ", ", NextDist, ")");

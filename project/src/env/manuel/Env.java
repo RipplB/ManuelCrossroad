@@ -19,7 +19,7 @@ public class Env extends Environment {
 
     static final int LANE_LENGTH = 10;
     static final int SIZE = 2 * LANE_LENGTH + 6;
-    static final int NB_CARS = 10;
+    static final int NB_CARS = 2;
 
     private final Logger logger = Logger.getLogger("project."+Env.class.getName());
     private final Random random = new Random(System.currentTimeMillis());
@@ -32,6 +32,7 @@ public class Env extends Environment {
         actions.put("start", this::initAllCars);
         actions.put("sleep", this::sleep);
         actions.put("move", this::moveCar);
+        actions.put("finish", this::finisherMoves);
     }
 
     /** Called before the MAS execution with the args informed in .mas2j */
@@ -87,10 +88,42 @@ public class Env extends Environment {
             logger.warning("There is something blocking the way");
             return false;
         }
-        if (dist >= SIZE)
+        model.setNewPos(newLocation.x, newLocation.y, args[0]);
+        return true;
+    }
+
+    private boolean finisherMoves(String[] args) {
+        if (args.length < 2)
+            return false;
+        int side = Integer.parseInt(args[1]);
+        int target = Integer.parseInt(args[2]);
+        Location currentPosition = model.getAgPos(Integer.parseInt(args[0].substring(3)));
+        Location targetPosition = switch (side) {
+            case 0 -> {
+                int desiredY = target == 2 ? SIZE : LANE_LENGTH + (target == 1 ? 3 : 0);
+                yield currentPosition.y < desiredY ? new Location(currentPosition.x, currentPosition.y + 1) : new Location(currentPosition.x + (2 - target), currentPosition.y);
+            }
+            case 1 -> {
+                int desiredX = target == 3 ? -1 : LANE_LENGTH + (target == 2 ? 2 : 5);
+                yield currentPosition.x > desiredX ? new Location(currentPosition.x - 1, currentPosition.y) : new Location(currentPosition.x, currentPosition.y + (target - 1));
+            }
+            case 2 -> {
+                int desiredY = target == 0 ? -1 : LANE_LENGTH + (target == 3 ? 2 : 5);
+                yield currentPosition.y > desiredY ? new Location(currentPosition.x, currentPosition.y - 1) : new Location(currentPosition.x + (2 - target), currentPosition.y);
+            }
+            default -> {
+                int desiredX = target == 1 ? SIZE : LANE_LENGTH + (target == 0 ? 3 : 0);
+                yield currentPosition.x < desiredX ? new Location(currentPosition.x + 1, currentPosition.y) : new Location(currentPosition.x, currentPosition.y + (target - 1));
+            }
+        };
+        if (model.getAgAtPos(targetPosition) > -1) {
+            logger.warning("There is something blocking the way");
+            return false;
+        }
+        if (!model.inGrid(targetPosition))
             recreateCar(args[0]);
         else
-            model.setNewPos(newLocation.x, newLocation.y, args[0]);
+            model.setNewPos(targetPosition.x, targetPosition.y, args[0]);
         return true;
     }
 
@@ -111,11 +144,11 @@ public class Env extends Environment {
     }
 
     public void initCar(int n) {
-        int side = random.nextInt(3);
-        int lane = random.nextInt(2);
+        int side = random.nextInt(4);
+        int lane = random.nextInt(3);
         int target;
         do {
-            target = random.nextInt(3);
+            target = random.nextInt(4);
         } while (target == side);
         Location location = logicalCoordinateToModelCoordinate(side, lane, 0);
         String carName = String.format("car%d", n);
@@ -145,9 +178,10 @@ public class Env extends Environment {
 
     private void perceptCars() {
         for (int i = 0; i < NB_CARS; i++) {
-            LogicalCoordinate coor = LogicalCoordinate.of(model.getAgPos(i));
+            Location loc = model.getAgPos(i);
+            LogicalCoordinate coor = LogicalCoordinate.of(loc);
             int finalI = i;
-            logger.info(() -> String.format("Car%d is now at (%d, %d, %d)", finalI, coor.side, coor.lane, coor.distance));
+            logger.info(() -> String.format("Car%d is now at (%d, %d, %d) from (%d ; %d)", finalI, coor.side, coor.lane, coor.distance, loc.x, loc.y));
             addPercept(Literal.parseLiteral(String.format("car(%d, %d, %d)", coor.side, coor.lane, coor.distance)));
         }
     }
