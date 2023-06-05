@@ -45,20 +45,16 @@ class IntersectModel extends GridWorldModel {
 
         //setWalls
         //top left
-        this.addWall(LaneLength,0,LaneLength,LaneLength);
-        this.addWall(0,LaneLength,LaneLength,LaneLength);
+        this.addWall(0,0,LaneLength-1,LaneLength-1);
 
         //top right
-        this.addWall(LaneLength+6,0,LaneLength+6,LaneLength+6);
-        this.addWall(LaneLength+6,LaneLength+6,2*LaneLength+5,LaneLength);
+        this.addWall(0,LaneLength+6,LaneLength-1,2*LaneLength+5);
 
         //bottom left
-        this.addWall(LaneLength,LaneLength+6,LaneLength,2*LaneLength+5);
-        this.addWall(0,LaneLength,LaneLength,LaneLength+6);
+        this.addWall(LaneLength+6,LaneLength-1,0,2*LaneLength+5);
 
         //bottom right
-        this.addWall(LaneLength+6,LaneLength+6,2*LaneLength+5,LaneLength+6);
-        this.addWall(LaneLength+6,LaneLength+6,LaneLength+6,2*LaneLength+5);
+        this.addWall(LaneLength+6,LaneLength+6,2*LaneLength+5,2*LaneLength+5);
 
 
         // setAgPos(0,0,0);
