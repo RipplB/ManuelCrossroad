@@ -27,7 +27,7 @@ public class Env extends Environment {
     @Override
     public void init(String[] args) {
         super.init(args);
-        model = new IntersectModel();
+        model = new IntersectModel(LANE_LENGTH, NB_CARS);
     }
 
     @Override

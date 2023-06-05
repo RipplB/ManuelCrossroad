@@ -11,6 +11,8 @@ public class IntersectModelView extends GridWorldView {
 
     public IntersectModelView(GridWorldModel model, String title, int windowSize) {
         super(model, title, windowSize);
+        setVisible(true);
+        repaint();
     }
 
 
