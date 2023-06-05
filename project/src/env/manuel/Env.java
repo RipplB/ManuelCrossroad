@@ -2,21 +2,20 @@ package manuel;
 
 // Environment code for project project
 
-import jason.asSyntax.*;
-import jason.environment.*;
-import jason.asSyntax.parser.*;
+import jason.asSyntax.Literal;
+import jason.asSyntax.Structure;
+import jason.environment.Environment;
 import jason.environment.grid.Location;
 import jason.runtime.Settings;
 
-import java.rmi.RemoteException;
 import java.util.Random;
-import java.util.logging.*;
+import java.util.logging.Logger;
 
 public class Env extends Environment {
 
-    static final int LANE_LENGTH = 20;
+    static final int LANE_LENGTH = 10;
     static final int SIZE = 2 * LANE_LENGTH + 6;
-    static final int NB_CARS = 1;
+    static final int NB_CARS = 2;
 
     private final Logger logger = Logger.getLogger("project."+Env.class.getName());
     private final Random random = new Random(System.currentTimeMillis());
@@ -32,9 +31,14 @@ public class Env extends Environment {
 
     @Override
     public boolean executeAction(String agName, Structure action) {
+        try {
+            Thread.sleep(150);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         if (action.getFunctor().equals("start")) {
             for (int i = 0; i < NB_CARS; i++) {
-                createCar(i);
+                initCar(i, true);
             }
         } else if (action.getFunctor().equals("move")) {
             if (action.getArity() < 3)
@@ -47,7 +51,10 @@ public class Env extends Environment {
                 logger.warning("There is something blocking the way");
                 return false;
             }
-            model.setNewPos(newLocation.x, newLocation.y, agName);
+            if (dist >= SIZE)
+                initCar(agName);
+            else
+                model.setNewPos(newLocation.x, newLocation.y, agName);
             updatePercepts();
         }
         else {
@@ -59,28 +66,32 @@ public class Env extends Environment {
         return true; // the action was executed with success
     }
 
+    private void initCar(String agName) {
+        initCar(Integer.parseInt(agName.substring(3)), false);
+    }
+
     private void updatePercepts() {
         clearPercepts();
         perceptCars();
     }
 
-    /** Called before the end of MAS execution */
-    @Override
-    public void stop() {
-        super.stop();
-    }
-
-    public void createCar(int n) {
-        Settings settings = new Settings();
+    public void initCar(int n, boolean create) {
         int side = random.nextInt(3);
+        int lane = random.nextInt(2);
         int target;
         do {
             target = random.nextInt(3);
         } while (target != side);
-        settings.addOption(Settings.INIT_BELS, String.format("pos(%d,%d,0), target(%d)", side, random.nextInt(2), target));
+        Location location = logicalCoordinateToModelCoordinate(side, lane, 0);
+        String carName = String.format("car%d", n);
+        model.setNewPos(location.x, location.y, carName);
+        if (!create)
+            return;
+        Settings settings = new Settings();
+        settings.addOption(Settings.INIT_BELS, String.format("pos(%d,%d,0), target(%d)", side, lane, target));
         try {
             String newAgentName = getEnvironmentInfraTier().getRuntimeServices()
-                    .createAgent(String.format("car%d", n), "car.asl", null, null, null, settings, null);
+                    .createAgent(carName, "car.asl", null, null, null, settings, null);
             getEnvironmentInfraTier().getRuntimeServices().startAgent(newAgentName);
         } catch (Exception e) {
             throw new RuntimeException(e);
