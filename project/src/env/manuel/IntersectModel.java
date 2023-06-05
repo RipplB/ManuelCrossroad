@@ -6,34 +6,63 @@ import jason.environment.grid.Location;
 import java.util.Random;
 
 class IntersectModel extends GridWorldModel {
-
-
     public static final int   GREEN  = 8;
-
     public static final int   RED  = 16;
+
+    private IntersectModelView intersectModelView;
 
 
     Random random = new Random(System.currentTimeMillis());
 
-    IntersectModel() {
-        super(46, 46, 20);
+    IntersectModel(int LaneLength, int numOfCars) {
+        super(2*LaneLength+6, 2*LaneLength+6, numOfCars);
+
+        intersectModelView  = new IntersectModelView(this,"Pööööcs",1000);
+        this.setView(intersectModelView);
+
+
+        //set Lamps
+        //side 0 (TOP)
+        this.set(RED,LaneLength+1,LaneLength-1 );
+        this.set(RED,LaneLength+2,LaneLength-1 );
+        this.set(RED,LaneLength+3,LaneLength-1 );
+
+        //side 1 (RIGHT)
+        this.set(RED,LaneLength+7,LaneLength+1 );
+        this.set(RED,LaneLength+7,LaneLength+2 );
+        this.set(RED,LaneLength+7,LaneLength+3 );
+
+        //side 2 (BOTTOM)
+        this.set(RED,LaneLength+4,LaneLength+7 );
+        this.set(RED,LaneLength+5,LaneLength+7 );
+        this.set(RED,LaneLength+6,LaneLength+7 );
+
+        //side 3 (LEFT)
+        this.set(RED,LaneLength-1 ,LaneLength+4 );
+        this.set(RED,LaneLength-1 ,LaneLength+5 );
+        this.set(RED,LaneLength-1 ,LaneLength+6 );
+
+
+        //setWalls
+        //top left
+        this.addWall(LaneLength,0,LaneLength,LaneLength);
+        this.addWall(0,LaneLength,LaneLength,LaneLength);
+
+        //top right
+        this.addWall(LaneLength+6,0,LaneLength+6,LaneLength+6);
+        this.addWall(LaneLength+6,LaneLength+6,2*LaneLength+6,LaneLength);
+
+        //bottom left
+        this.addWall(LaneLength,LaneLength+6,LaneLength,2*LaneLength+6);
+        this.addWall(0,LaneLength,LaneLength,LaneLength+6);
+
+        //bottom right
+        this.addWall(LaneLength+6,LaneLength+6,2*LaneLength+6,LaneLength+6);
+        this.addWall(LaneLength+6,LaneLength+6,LaneLength+6,2*LaneLength+6);
+
+
         // setAgPos(0,0,0);
 
-    }
-
-    void nextSlot() throws Exception {
-        Location r1 = getAgPos(0);
-        r1.x++;
-        if (r1.x == getWidth()) {
-            r1.x = 0;
-            r1.y++;
-        }
-        // finished searching the whole grid
-        if (r1.y == getHeight()) {
-            return;
-        }
-        setAgPos(0, r1);
-        setAgPos(1, getAgPos(1)); // just to draw it in the view
     }
 
     void setNewPos(int x, int y, String agentName){
@@ -41,52 +70,5 @@ class IntersectModel extends GridWorldModel {
         setAgPos(Integer.valueOf(agentName),x,y);
     }
 
-    void moveTowards(int x, int y) throws Exception {
-        Location r1 = getAgPos(0);
-        if (r1.x < x)
-            r1.x++;
-        else if (r1.x > x)
-            r1.x--;
-        if (r1.y < y)
-            r1.y++;
-        else if (r1.y > y)
-            r1.y--;
-        setAgPos(0, r1);
-        setAgPos(1, getAgPos(1)); // just to draw it in the view
-    }
 
-    void turnRight(){
-
-    }
-
-    void turnLeft(){
-
-    }
-
-    void pickGarb() {
-        // r1 location has garbage
-        if (model.hasObject(GARB, getAgPos(0))) {
-            // sometimes the "picking" action doesn't work
-            // but never more than MErr times
-            if (random.nextBoolean() || nerr == MErr) {
-                remove(GARB, getAgPos(0));
-                nerr = 0;
-                r1HasGarb = true;
-            } else {
-                nerr++;
-            }
-        }
-    }
-    void dropGarb() {
-        if (r1HasGarb) {
-            r1HasGarb = false;
-            add(GARB, getAgPos(0));
-        }
-    }
-    void burnGarb() {
-        // r2 location has garbage
-        if (model.hasObject(GARB, getAgPos(1))) {
-            remove(GARB, getAgPos(1));
-        }
-    }
 }
