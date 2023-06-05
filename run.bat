@@ -1,0 +1,1 @@
+wsl /mnt/c/programming/tools/jason/bin/jason project/project.mas2j -v
