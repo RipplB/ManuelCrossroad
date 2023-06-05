@@ -41,7 +41,8 @@ desired_lane(TargetLane)
         createCar(pls).
 
 +!proceed : pos(Side, Lane, Dist) & NextDist = Dist + 1 //& desired_lane(Lane)
-    <-  .print("Moving forwards from (", Side, ", ", Lane, ", ", Dist, ")");
+    <-  .print("Moving forwards from (", Side, ", ", Lane, ", ", Dist, ") to ", NextDist);
         move(Side, Lane, NextDist);
+        -+pos(Side, Lane, NextDist);
         .print("New pos (", Side, ", ", Lane, ", ", NextDist, ")");
         !proceed.

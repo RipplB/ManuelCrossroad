@@ -43,8 +43,10 @@ public class Env extends Environment {
             int lane = Integer.parseInt(action.getTerm(1).toString());
             int dist = Integer.parseInt(action.getTerm(2).toString());
             Location newLocation = logicalCoordinateToModelCoordinate(side, lane, dist);
-            if (model.getAgAtPos(newLocation) > -1)
+            if (model.getAgAtPos(newLocation) > -1) {
+                logger.warning("There is something blocking the way");
                 return false;
+            }
             model.setNewPos(newLocation.x, newLocation.y, agName);
             updatePercepts();
         }
