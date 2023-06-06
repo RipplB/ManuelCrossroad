@@ -116,7 +116,7 @@ public class Env extends Environment {
                 yield currentPosition.x < desiredX ? new Location(currentPosition.x + 1, currentPosition.y) : new Location(currentPosition.x, currentPosition.y + (target - 1));
             }
         };
-        if (model.getAgAtPos(targetPosition) > -1) {
+        if (model.getAgAtPos(targetPosition) > -1 || model.hasObject(IntersectModel.RED, currentPosition)) {
             logger.warning("There is something blocking the way");
             return false;
         }
@@ -193,7 +193,15 @@ public class Env extends Environment {
     }
 
     private void perceptLights() {
-
+        for (int side = 0; side < 4; side++) {
+            for (int lane = 0; lane < 3; lane++) {
+                Location location = logicalCoordinateToModelCoordinate(side, lane, LANE_LENGTH - 1);
+                if (model.hasObject(IntersectModel.GREEN, location))
+                    addPercept(Literal.parseLiteral(String.format("green(%d, %d)", side, lane)));
+                else
+                    addPercept(Literal.parseLiteral(String.format("red(%d, %d)", side, lane)));
+            }
+        }
     }
 
 }
