@@ -20,7 +20,10 @@ public class IntersectModelView extends GridWorldView {
     public void draw(Graphics g, int x, int y, int object) {
         switch (object) {
             case IntersectModel.RED:
-                drawLamp(g, x, y);
+                drawRedLamp(g, x, y);
+                break;
+            case IntersectModel.GREEN:
+                drawGreenLamp(g, x, y);
                 break;
         }
     }
@@ -45,11 +48,17 @@ public class IntersectModelView extends GridWorldView {
         g.drawLine(x * cellSizeW + 2, (y + 1) * cellSizeH - 2, (x + 1) * cellSizeW - 2, y * cellSizeH + 2);
     }
 
-    public void drawLamp(Graphics g, int x, int y) {
+    public void drawRedLamp(Graphics g, int x, int y) {
         g.setColor(Color.gray);
         g.fillRect(x * cellSizeW, y * cellSizeH, cellSizeW, cellSizeH);
         g.setColor(Color.red);
         g.fillRect(x * cellSizeW + 2, y * cellSizeH + 2, cellSizeW - 4, cellSizeH - 4);
+    }
 
+    public void drawGreenLamp(Graphics g, int x, int y) {
+        g.setColor(Color.gray);
+        g.fillRect(x * cellSizeW, y * cellSizeH, cellSizeW, cellSizeH);
+        g.setColor(Color.green);
+        g.fillRect(x * cellSizeW + 2, y * cellSizeH + 2, cellSizeW - 4, cellSizeH - 4);
     }
 }
