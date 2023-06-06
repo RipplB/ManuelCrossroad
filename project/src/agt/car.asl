@@ -65,7 +65,7 @@ next_lane(TargetLane)
         -+pos(Side, DesiredLane, Dist);
         !proceed.
 
-+!proceed : pos(Side, Lane, Dist) & next_lane(Lane) & NextDist = Dist + 1 & not car(Side, Lane, NextDist)
++!proceed : pos(Side, Lane, Dist) & xdistance(MaxDist) & Dist < MaxDist & NextDist = Dist + 1 & not car(Side, Lane, NextDist)
     <-  .print("Moving forwards from (", Side, ", ", Lane, ", ", Dist, ") to ", NextDist);
         move(Side, Lane, NextDist);
         .print("New pos (", Side, ", ", Lane, ", ", NextDist, ")");

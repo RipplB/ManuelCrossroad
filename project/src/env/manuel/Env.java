@@ -19,7 +19,7 @@ public class Env extends Environment {
 
     static final int LANE_LENGTH = 10;
     static final int SIZE = 2 * LANE_LENGTH + 6;
-    static final int NB_CARS = 2;
+    static final int NB_CARS = 20;
 
     private final Logger logger = Logger.getLogger("project."+Env.class.getName());
     private final Random random = new Random(System.currentTimeMillis());
@@ -45,7 +45,7 @@ public class Env extends Environment {
     @Override
     public boolean executeAction(String agName, Structure action) {
         try {
-            Thread.sleep(190 - 4 * LANE_LENGTH);
+            Thread.sleep(190 - 4 * LANE_LENGTH - 5 * NB_CARS);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -130,8 +130,11 @@ public class Env extends Environment {
     private void recreateCar(String agName) {
         try {
             getEnvironmentInfraTier().getRuntimeServices().killAgent(agName, null, 0);
+            Thread.sleep(50);
             logger.warning(() -> String.format("Killed %s", agName));
         } catch (RemoteException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
         initCar(Integer.parseInt(agName.substring(3)));
@@ -179,9 +182,11 @@ public class Env extends Environment {
     private void perceptCars() {
         for (int i = 0; i < NB_CARS; i++) {
             Location loc = model.getAgPos(i);
+            if (loc == null)
+                continue;
             LogicalCoordinate coor = LogicalCoordinate.of(loc);
             int finalI = i;
-            logger.info(() -> String.format("Car%d is now at (%d, %d, %d) from (%d ; %d)", finalI, coor.side, coor.lane, coor.distance, loc.x, loc.y));
+            //logger.info(() -> String.format("Car%d is now at (%d, %d, %d) from (%d ; %d)", finalI, coor.side, coor.lane, coor.distance, loc.x, loc.y));
             addPercept(Literal.parseLiteral(String.format("car(%d, %d, %d)", coor.side, coor.lane, coor.distance)));
         }
     }

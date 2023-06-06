@@ -17,7 +17,7 @@ class IntersectModel extends GridWorldModel {
     IntersectModel(int LaneLength, int numOfCars) {
         super(2*LaneLength+6, 2*LaneLength+6, numOfCars);
 
-        intersectModelView  = new IntersectModelView(this,"Pööööcs",1000);
+        intersectModelView  = new IntersectModelView(this,"Pööööcs",600);
         this.setView(intersectModelView);
 
 
