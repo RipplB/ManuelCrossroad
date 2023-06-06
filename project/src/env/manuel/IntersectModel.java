@@ -13,11 +13,14 @@ class IntersectModel extends GridWorldModel {
 
     private LogicalCoordinate logicalCoordinate;
 
+    private final int LaneLength;
+
 
     Random random = new Random(System.currentTimeMillis());
 
     IntersectModel(int LaneLength, int numOfCars) {
         super(2*LaneLength+6, 2*LaneLength+6, numOfCars);
+        this.LaneLength = LaneLength;
 
         intersectModelView  = new IntersectModelView(this,"Pööööcs",600);
         this.setView(intersectModelView);
@@ -64,14 +67,14 @@ class IntersectModel extends GridWorldModel {
         setAgPos(Integer.valueOf(agentName),x,y);
     }
 
-    void greenLight(int side, int lane, int LaneLength){
-        Location gL = Env.logicalCoordinateToModelCoordinate(side,lane,LaneLength);
+    void greenLight(int side, int lane){
+        Location gL = Env.logicalCoordinateToModelCoordinate(side,lane,LaneLength-1);
         this.remove(RED,gL.x,gL.y);
         this.set(GREEN, gL.x, gL.y);
     }
 
-    void redLight(int side, int lane, int LaneLength){
-        Location gL = Env.logicalCoordinateToModelCoordinate(side,lane,LaneLength);
+    void redLight(int side, int lane){
+        Location gL = Env.logicalCoordinateToModelCoordinate(side,lane,LaneLength-1);
         this.set(0,gL.x,gL.y);
         this.set(RED, gL.x, gL.y);
     }

@@ -19,7 +19,7 @@ public class Env extends Environment {
 
     static final int LANE_LENGTH = 10;
     static final int SIZE = 2 * LANE_LENGTH + 6;
-    static final int NB_CARS = 20;
+    static final int NB_CARS = 40;
 
     private final Logger logger = Logger.getLogger("project."+Env.class.getName());
     private final Random random = new Random(System.currentTimeMillis());
@@ -33,6 +33,7 @@ public class Env extends Environment {
         actions.put("sleep", this::sleep);
         actions.put("move", this::moveCar);
         actions.put("finish", this::finisherMoves);
+        actions.put("lights", this::changeLight);
     }
 
     /** Called before the MAS execution with the args informed in .mas2j */
@@ -45,12 +46,17 @@ public class Env extends Environment {
     @Override
     public boolean executeAction(String agName, Structure action) {
         try {
-            Thread.sleep(190 - 4 * LANE_LENGTH - 5 * NB_CARS);
+            long goodTimeout = 190 - 4 * LANE_LENGTH - 5 * NB_CARS;
+            Thread.sleep(Math.max(goodTimeout, 5L));
+            if (agName.equals("xroad"))
+                Thread.sleep(2000);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-        if (!actions.containsKey(action.getFunctor()))
+        if (!actions.containsKey(action.getFunctor())) {
             logger.info(() -> String.format("executing: %s, but not implemented!", action));
+            return false;
+        }
 
         logger.info(() -> String.format("executing: %s", action));
 
@@ -124,6 +130,21 @@ public class Env extends Environment {
             recreateCar(args[0]);
         else
             model.setNewPos(targetPosition.x, targetPosition.y, args[0]);
+        return true;
+    }
+
+    private boolean changeLight(String[] args) {
+        if (args.length < 4)
+            return false;
+        int side = Integer.parseInt(args[1]);
+        int lane = Integer.parseInt(args[2]);
+        //String light = args[3];
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 3; j++) {
+                model.redLight(i, j);
+            }
+        }
+        model.greenLight(side, lane);
         return true;
     }
 
