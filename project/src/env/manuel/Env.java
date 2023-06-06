@@ -144,6 +144,7 @@ public class Env extends Environment {
         //clearAllPercepts();
         clearPercepts();
         perceptCars();
+        perceptLights();
     }
 
     public void initCar(int n) {
@@ -169,7 +170,7 @@ public class Env extends Environment {
         }
     }
 
-    private Location logicalCoordinateToModelCoordinate(int side, int lane, int distance) {
+    public static Location logicalCoordinateToModelCoordinate(int side, int lane, int distance) {
         return switch (side) {
             case 0 -> new Location(LANE_LENGTH + 2 - lane, distance);
             case 1 -> new Location(SIZE - distance - 1, LANE_LENGTH + 2 - lane);
@@ -189,6 +190,10 @@ public class Env extends Environment {
             //logger.info(() -> String.format("Car%d is now at (%d, %d, %d) from (%d ; %d)", finalI, coor.side, coor.lane, coor.distance, loc.x, loc.y));
             addPercept(Literal.parseLiteral(String.format("car(%d, %d, %d)", coor.side, coor.lane, coor.distance)));
         }
+    }
+
+    private void perceptLights() {
+
     }
 
 }
