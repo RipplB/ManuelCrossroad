@@ -21,14 +21,15 @@ lightOfLane(Side, Lane, Light)
         .send(light12, askOne, lightValue(_, _, _), Light12Value);
         .sort([Light1Value, Light2Value, Light3Value, Light4Value, Light5Value, Light6Value, Light7Value, Light8Value, Light9Value, Light10Value, Light11Value, Light12Value], SortedValues);
         .nth(11, SortedValues, lightValue(Val, Side, Lane));
+        .broadcast(untell, halt);
         lights(Side, Lane, green);
         ?lightOfLane(Side, Lane, Light);
-        .broadcast(tell, winner(Side, Lane));
         .send(Light, tell, green);
         .wait(2000);
         !halt.
 
 +!halt: true
     <-  lights(0, 0, red);
+        .broadcast(tell, halt);
         .wait(2000);
         !run.

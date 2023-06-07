@@ -166,7 +166,6 @@ public class Env extends Environment {
     private void updatePercepts() {
         clearPercepts();
         perceptCars();
-        perceptLights();
     }
 
     public void initCar(int n) {
@@ -209,18 +208,6 @@ public class Env extends Environment {
                 continue;
             LogicalCoordinate coor = LogicalCoordinate.of(loc);
             addPercept(Literal.parseLiteral(String.format("car(%d, %d, %d, car%d)", coor.side, coor.lane, coor.distance, i)));
-        }
-    }
-
-    private void perceptLights() {
-        for (int side = 0; side < 4; side++) {
-            for (int lane = 0; lane < 3; lane++) {
-                Location location = logicalCoordinateToModelCoordinate(side, lane, LANE_LENGTH - 1);
-                if (model.hasObject(IntersectModel.GREEN, location))
-                    addPercept(Literal.parseLiteral(String.format("green(%d, %d)", side, lane)));
-                else
-                    addPercept(Literal.parseLiteral(String.format("red(%d, %d)", side, lane)));
-            }
         }
     }
 
