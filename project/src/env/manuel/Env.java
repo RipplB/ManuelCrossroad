@@ -51,14 +51,14 @@ public class Env extends Environment {
             logger.info(() -> String.format("executing: %s, but not implemented!", action));
             return false;
         }
-        try {
-            long goodTimeout = 190 - 4 * LANE_LENGTH - 5 * NB_CARS;
-            Thread.sleep(Math.max(goodTimeout, 5L));
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+        if (agName.contains("car")) {
+            try {
+                long goodTimeout = 190 - 4 * LANE_LENGTH - 5 * NB_CARS;
+                Thread.sleep(Math.max(goodTimeout, 5L));
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
         }
-
-        //logger.info(() -> String.format("executing: %s", action));
 
         String[] actionArguments = new String[action.getArity() + 1];
         actionArguments[0] = agName;
