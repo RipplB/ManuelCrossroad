@@ -67,16 +67,22 @@ class IntersectModel extends GridWorldModel {
     void greenLight(int side, int lane){
         Location gL = Env.logicalCoordinateToModelCoordinate(side,lane,LaneLength-1);
         this.remove(RED, gL.x, gL.y);
-        this.set(GREEN, gL.x, gL.y);
-        view.update(gL.x, gL.y);
+        this.add(GREEN, gL.x, gL.y);
     }
 
     void redLight(int side, int lane){
         Location gL = Env.logicalCoordinateToModelCoordinate(side,lane,LaneLength-1);
-        if (this.isFree(2,gL)) {
-            this.remove(GREEN, gL.x, gL.y);
-            this.set(RED, gL.x, gL.y);
-            view.update(gL.x, gL.y);
+        this.remove(GREEN, gL.x, gL.y);
+        this.add(RED, gL.x, gL.y);
+    }
+
+    @Override
+    public void setAgPos(int ag, Location l) {
+        Location oldLoc = getAgPos(ag);
+        agPos[ag] = l;
+        add(AGENT, l.x, l.y);
+        if (oldLoc != null) {
+            remove(AGENT, oldLoc.x, oldLoc.y);
         }
     }
 

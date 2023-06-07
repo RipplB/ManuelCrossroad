@@ -67,6 +67,14 @@ public class IntersectModelView extends GridWorldView {
         }
     }
 
+    @Override
+    public void drawEmpty(Graphics g, int x, int y) {
+        g.setColor(new Color(238, 238, 238));
+        g.fillRect(x * cellSizeW + 1, y * cellSizeH+1, cellSizeW-2, cellSizeH-2);
+        g.setColor(Color.lightGray);
+        g.drawRect(x * cellSizeW, y * cellSizeH, cellSizeW, cellSizeH);
+    }
+
 
     public void drawAmbulance(Graphics g, int x, int y) {
         g.setColor(Color.gray);
