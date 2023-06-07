@@ -53,7 +53,7 @@ public class Env extends Environment {
         }
         if (agName.contains("car")) {
             try {
-                Thread.sleep(50);
+                Thread.sleep(20L + random.nextInt(60));
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
