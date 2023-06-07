@@ -18,9 +18,9 @@ import java.util.logging.Logger;
 
 public class Env extends Environment {
 
-    static final int LANE_LENGTH = 8;
+    static final int LANE_LENGTH = 12;
     static final int SIZE = 2 * LANE_LENGTH + 6;
-    static final int NB_CARS = 20;
+    static final int NB_CARS = 40;
 
     private final Logger logger = Logger.getLogger("project."+Env.class.getName());
     private final Random random = new Random(System.currentTimeMillis());
@@ -52,7 +52,7 @@ public class Env extends Environment {
         }
         if (agName.contains("car")) {
             try {
-                Thread.sleep(20L + random.nextInt(60));
+                Thread.sleep(5L + random.nextInt(30));
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }

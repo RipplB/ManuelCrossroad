@@ -39,7 +39,11 @@ blocked_by(3, 0, [lane(0, 1), lane(0, 0), lane(1, 0), lane(1, 1), lane(2, 0)]).
         .wait(2000);
         !halt.
 
-+!turn_valid_green(WinnerList, Index, _) : .nth(Index, WinnerList, lightValue(0, _, _)) | Index == -1
+        
++!turn_valid_green(_, -1, _) : true
+    <-  true.
+
++!turn_valid_green(WinnerList, Index, _) : Index \== -1 & .nth(Index, WinnerList, lightValue(0, _, _))
     <-  true.
 
 +!turn_valid_green(WinnerList, Index, Blocklist) : .nth(Index, WinnerList, lightValue(_, Side, Lane)) & .member(lane(Side, Lane), Blocklist)
