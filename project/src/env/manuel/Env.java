@@ -18,9 +18,9 @@ import java.util.logging.Logger;
 
 public class Env extends Environment {
 
-    static final int LANE_LENGTH = 10;
+    static final int LANE_LENGTH = 4;
     static final int SIZE = 2 * LANE_LENGTH + 6;
-    static final int NB_CARS = 1;
+    static final int NB_CARS = 12;
 
     private final Logger logger = Logger.getLogger("project."+Env.class.getName());
     private final Random random = new Random(System.currentTimeMillis());
