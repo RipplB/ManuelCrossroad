@@ -17,11 +17,11 @@ class IntersectModel extends GridWorldModel {
 
     Random random = new Random(System.currentTimeMillis());
 
-    IntersectModel(int LaneLength, int numOfCars) {
+    IntersectModel(int LaneLength, int numOfCars,Env env) {
         super(2*LaneLength+6, 2*LaneLength+6, numOfCars);
         this.LaneLength = LaneLength;
 
-        intersectModelView  = new IntersectModelView(this,"Pööööcs",600);
+        intersectModelView  = new IntersectModelView(this,"Pööööcs",600,env);
         this.setView(intersectModelView);
 
         //set Lamps

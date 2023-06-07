@@ -12,9 +12,12 @@ import java.util.logging.Logger;
 public class IntersectModelView extends GridWorldView {
     private final Logger logger = Logger.getLogger("project."+Env.class.getName());
 
-    public IntersectModelView(GridWorldModel model, String title, int windowSize) {
+    Env env;
+
+    public IntersectModelView(GridWorldModel model, String title, int windowSize,Env env) {
         super(model, title, windowSize);
         setVisible(true);
+        this.env = env;
         repaint();
     }
 
@@ -42,6 +45,7 @@ public class IntersectModelView extends GridWorldView {
 
        butt1.addActionListener((new ActionListener() {
            public void actionPerformed(ActionEvent e) {
+               env.initAmbulance();
                butt2.setEnabled(!butt2.isEnabled());
                butt3.setEnabled(!butt3.isEnabled());
                butt4.setEnabled(!butt4.isEnabled());

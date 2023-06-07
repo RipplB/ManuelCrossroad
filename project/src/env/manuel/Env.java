@@ -41,12 +41,11 @@ public class Env extends Environment {
     @Override
     public void init(String[] args) {
         super.init(args);
-        model = new IntersectModel(LANE_LENGTH, NB_CARS);
+        model = new IntersectModel(LANE_LENGTH, NB_CARS,this);
     }
 
     @Override
     public boolean executeAction(String agName, Structure action) {
-
         if (!actions.containsKey(action.getFunctor())) {
             logger.info(() -> String.format("executing: %s, but not implemented!", action));
             return false;
@@ -192,6 +191,31 @@ public class Env extends Environment {
         }
     }
 
+    public void initAmbulance() {
+        int side = random.nextInt(4);
+        int lane = random.nextInt(3);
+        int target;
+        do {
+            target = random.nextInt(4);
+        } while (target == side);
+        Location location = logicalCoordinateToModelCoordinate(side, lane, 0);
+        String carName = String.format("amb%d", 1);
+        logger.info(carName);
+        model.setNewPos(location.x, location.y, carName);
+        Settings settings = new Settings();
+        String beliefs = String.format("pos(%d,%d,0), target(%d), xdistance(%d)", side, lane, target, LANE_LENGTH);
+        logger.info(() -> String.format("Creating amb with %s which is on %d %d", beliefs, location.x, location.y));
+        settings.addOption(Settings.INIT_BELS, beliefs);
+        try {
+            String newAgentName = getEnvironmentInfraTier().getRuntimeServices()
+                    .createAgent(carName, "ambulance.asl", null, null, null, settings, null);
+            getEnvironmentInfraTier().getRuntimeServices().startAgent(newAgentName);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
     public static Location logicalCoordinateToModelCoordinate(int side, int lane, int distance) {
         return switch (side) {
             case 0 -> new Location(LANE_LENGTH + 2 - lane, distance);
@@ -201,6 +225,8 @@ public class Env extends Environment {
             default -> throw new IllegalStateException("Unexpected value: " + side);
         };
     }
+
+
 
     private void perceptCars() {
         for (int i = 0; i < NB_CARS; i++) {
