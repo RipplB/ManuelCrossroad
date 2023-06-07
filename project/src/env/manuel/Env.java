@@ -18,9 +18,9 @@ import java.util.logging.Logger;
 
 public class Env extends Environment {
 
-    static final int LANE_LENGTH = 10;
+    static final int LANE_LENGTH = 4;
     static final int SIZE = 2 * LANE_LENGTH + 6;
-    static final int NB_CARS = 10;
+    static final int NB_CARS = 12;
 
     private final Logger logger = Logger.getLogger("project."+Env.class.getName());
     private final Random random = new Random(System.currentTimeMillis());
@@ -46,20 +46,13 @@ public class Env extends Environment {
 
     @Override
     public boolean executeAction(String agName, Structure action) {
-        try {
-            long goodTimeout = 190 - 4 * LANE_LENGTH - 5 * NB_CARS;
-            Thread.sleep(Math.max(goodTimeout, 5L));
-            if (agName.equals("xroad"))
-                Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+
         if (!actions.containsKey(action.getFunctor())) {
             logger.info(() -> String.format("executing: %s, but not implemented!", action));
             return false;
         }
 
-        logger.info(() -> String.format("executing: %s", action));
+        //logger.info(() -> String.format("executing: %s", action));
 
         String[] actionArguments = new String[action.getArity() + 1];
         actionArguments[0] = agName;
@@ -70,6 +63,12 @@ public class Env extends Environment {
 
         updatePercepts();
         informAgsEnvironmentChanged();
+        try {
+            long goodTimeout = 190 - 4 * LANE_LENGTH - 5 * NB_CARS;
+            Thread.sleep(Math.max(goodTimeout, 5L));
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         return result; // the action was executed with success
     }
 
@@ -92,7 +91,7 @@ public class Env extends Environment {
         int dist = Integer.parseInt(args[3]);
         Location newLocation = logicalCoordinateToModelCoordinate(side, lane, dist);
         if (model.getAgAtPos(newLocation) > -1) {
-            logger.warning("There is something blocking the way");
+            logger.severe("There is something blocking the way");
             return false;
         }
         model.setNewPos(newLocation.x, newLocation.y, args[0]);
@@ -156,7 +155,7 @@ public class Env extends Environment {
             while (!rs.getNewAgentName(agName).equals(agName)) {
                 Thread.sleep(2);
             }
-            logger.warning(() -> String.format("Killed %s", agName));
+            //logger.warning(() -> String.format("Killed %s", agName));
         } catch (RemoteException e) {
             throw new RuntimeException(e);
         } catch (InterruptedException e) {
@@ -213,7 +212,7 @@ public class Env extends Environment {
             LogicalCoordinate coor = LogicalCoordinate.of(loc);
             int finalI = i;
             //logger.info(() -> String.format("Car%d is now at (%d, %d, %d) from (%d ; %d)", finalI, coor.side, coor.lane, coor.distance, loc.x, loc.y));
-            addPercept(Literal.parseLiteral(String.format("car(%d, %d, %d)", coor.side, coor.lane, coor.distance)));
+            addPercept(Literal.parseLiteral(String.format("car(%d, %d, %d, car%d)", coor.side, coor.lane, coor.distance, i)));
         }
     }
 

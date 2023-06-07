@@ -4,6 +4,10 @@
                 //and distance is measured from the start
 //target(3).  //where this car wants to go. (side) where side is the same as above
 //xdistance(10).     where the crossroad is. If distance reaches it, this agent has no more things to think about.
+value(0).
+
+lightOfLane(Side, Lane, Light)
+:- NumberOfLight = 3 * Side + 2 - Lane + 1 & .concat("light", NumberOfLight, Light).
 
 !proceed.
 
@@ -37,44 +41,41 @@ next_lane(TargetLane)
 next_lane(TargetLane)
 :- desired_lane(TargetLane) & pos(_, Lane, _) & (TargetLane == Lane | ((TargetLane + Lane) mod 2 == 1)).
 
-// +!init:
-//         .random(SideSeed) & Side = ((30 * SideSeed) div 10) &
-//         .random(LaneSeed) & Lane = ((20 * LaneSeed) div 10) &
-//         .random(TargetSeed) & Target = ((30 * TargetSeed) div 10) &
-//         Target \== Side
-//     <-  -+pos(Side, Lane, 0);
-//         -+target(Target);
-//         !test.
-
-// +!init: true <- !init.
-
-+!test : pos(Side, Lane, Dist) & desired_lane(NewLane) & target(Target)
-    <-  .print("Reeval pos from (", Side, ", ", Lane, ", ", Dist, ") when target is ", Target);
-        -+pos(Side, NewLane, Dist);
-        move(Side, NewLane, Dist);
-        .print("New lane: ", NewLane);
-        createCar(pls).
-
 +!proceed : pos(_, Lane, Dist) & next_lane(Lane) & xdistance(Dist)
-    <-  !finish.
+    <-  !entry_xroad.
 
-+!proceed : pos(Side, Lane, Dist) & next_lane(DesiredLane) & Lane \== DesiredLane & not car(Side, DesiredLane, Dist)
++!proceed : pos(Side, Lane, Dist) & next_lane(DesiredLane) & Lane \== DesiredLane & not car(Side, DesiredLane, Dist, _)
     <-  .print("Reeval pos from (", Side, ", ", Lane, ", ", Dist, ")");
         move(Side, DesiredLane, Dist);
         .print("New lane: ", DesiredLane);
         -+pos(Side, DesiredLane, Dist);
         !proceed.
 
-+!proceed : pos(Side, Lane, Dist) & xdistance(MaxDist) & Dist < MaxDist & NextDist = Dist + 1
-    & not car(Side, Lane, NextDist) & (green(Side, Lane) | NextDist < MaxDist)
++!proceed : pos(Side, Lane, Dist) & xdistance(MaxDist) & Dist < MaxDist & NextDist = Dist + 1 & next_lane(DesiredLane)
+    & not car(Side, Lane, NextDist, _) & (((green(Side, Lane) | NextDist < MaxDist) & DesiredLane == Lane) | (NextDist < MaxDist - 1))
     <-  .print("Moving forwards from (", Side, ", ", Lane, ", ", Dist, ") to ", NextDist);
         move(Side, Lane, NextDist);
         .print("New pos (", Side, ", ", Lane, ", ", NextDist, ")");
         -+pos(Side, Lane, NextDist);
         !proceed.
 
++!proceed : pos(Side, Lane, Dist) & NextDist = Dist + 1 & (car(Side, Lane, NextDist, _) | not green(Side, Lane))
+    & next_lane(DesiredLane) & Lane == DesiredLane & value(CurrentValue) & Value = CurrentValue + 1 & lightOfLane(Side, Lane, Light)
+    <-  sleep;
+        .print("Waiting for greenlight");
+        .my_name(MyName);
+        .send(Light, untell, value(MyName, CurrentValue));
+        .send(Light, tell, value(MyName, Value));
+        -+value(Value);
+        !proceed.
+
 +!proceed : true <- .print("Can't move"); sleep; !proceed.
 -!proceed : true <- .print("Can't move"); sleep; !proceed.
+
++!entry_xroad : pos(Side, Lane, _) & lightOfLane(Side, Lane, Light)
+    <-  .my_name(MyName);
+        .send(Light, tell, leave(MyName));
+        !finish.
 
 +!finish : pos(Side, _, _) & target(Target)
     <-  finish(Side, Target); !finish.

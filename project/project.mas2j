@@ -15,6 +15,7 @@ MAS project {
     environment: manuel.Env
 
     agents: xroad;
+            light #12;
 
     aslSourcePath: "src/agt";
 }
