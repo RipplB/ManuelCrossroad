@@ -52,7 +52,7 @@ public class Env extends Environment {
         }
         if (agName.contains("car")) {
             try {
-                Thread.sleep(50);
+                Thread.sleep(20L + random.nextInt(60));
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
@@ -134,13 +134,15 @@ public class Env extends Environment {
     private boolean changeLight(String[] args) {
         if (args.length < 4)
             return false;
-        for (int i = 0; i < 4; i++) {
-            for (int j = 0; j < 3; j++) {
-                model.redLight(i, j);
+
+        if ("red".equals(args[3])) {
+            for (int i = 0; i < 4; i++) {
+                for (int j = 0; j < 3; j++) {
+                    model.redLight(i, j);
+                }
             }
-        }
-        if ("red".equals(args[3]))
             return true;
+        }
         int side = Integer.parseInt(args[1]);
         int lane = Integer.parseInt(args[2]);
         model.greenLight(side, lane);
@@ -154,9 +156,7 @@ public class Env extends Environment {
             while (!rs.getNewAgentName(agName).equals(agName)) {
                 Thread.sleep(2);
             }
-        } catch (RemoteException e) {
-            throw new RuntimeException(e);
-        } catch (InterruptedException e) {
+        } catch (RemoteException | InterruptedException e) {
             throw new RuntimeException(e);
         }
         initCar(Integer.parseInt(agName.substring(3)));
@@ -165,7 +165,6 @@ public class Env extends Environment {
     private void updatePercepts() {
         clearPercepts();
         perceptCars();
-        perceptLights();
     }
 
     public void initCar(int n) {
@@ -235,18 +234,6 @@ public class Env extends Environment {
                 continue;
             LogicalCoordinate coor = LogicalCoordinate.of(loc);
             addPercept(Literal.parseLiteral(String.format("car(%d, %d, %d, car%d)", coor.side, coor.lane, coor.distance, i)));
-        }
-    }
-
-    private void perceptLights() {
-        for (int side = 0; side < 4; side++) {
-            for (int lane = 0; lane < 3; lane++) {
-                Location location = logicalCoordinateToModelCoordinate(side, lane, LANE_LENGTH - 1);
-                if (model.hasObject(IntersectModel.GREEN, location))
-                    addPercept(Literal.parseLiteral(String.format("green(%d, %d)", side, lane)));
-                else
-                    addPercept(Literal.parseLiteral(String.format("red(%d, %d)", side, lane)));
-            }
         }
     }
 

@@ -33,7 +33,19 @@ summarize_list(List, Index, 0)
         -+greenBonus(ResultedGreenBonus).
 
 +green : true
-    <-  -+greenBonus(9); .abolish(green).
+    <-  -+greenBonus(9);
+        .abolish(green);
+        .my_name(MyName);
+        ?laneOfLight(MyName, Side, Lane);
+        .broadcast(untell, red(Side, Lane));
+        .broadcast(tell, green(Side, Lane)).
+
++halt : true
+    <-  .abolish(halt);
+        .my_name(MyName);
+        ?laneOfLight(MyName, Side, Lane);
+        .broadcast(tell, red(Side, Lane));
+        .broadcast(untell, green(Side, Lane)).
 
 
 +?lightValue(TotalValue, Side, Lane) : greenBonus(GreenBonus)
