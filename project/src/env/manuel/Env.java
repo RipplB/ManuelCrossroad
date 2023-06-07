@@ -135,13 +135,15 @@ public class Env extends Environment {
     private boolean changeLight(String[] args) {
         if (args.length < 4)
             return false;
-        for (int i = 0; i < 4; i++) {
-            for (int j = 0; j < 3; j++) {
-                model.redLight(i, j);
+
+        if ("red".equals(args[3])) {
+            for (int i = 0; i < 4; i++) {
+                for (int j = 0; j < 3; j++) {
+                    model.redLight(i, j);
+                }
             }
-        }
-        if ("red".equals(args[3]))
             return true;
+        }
         int side = Integer.parseInt(args[1]);
         int lane = Integer.parseInt(args[2]);
         model.greenLight(side, lane);
@@ -155,9 +157,7 @@ public class Env extends Environment {
             while (!rs.getNewAgentName(agName).equals(agName)) {
                 Thread.sleep(2);
             }
-        } catch (RemoteException e) {
-            throw new RuntimeException(e);
-        } catch (InterruptedException e) {
+        } catch (RemoteException | InterruptedException e) {
             throw new RuntimeException(e);
         }
         initCar(Integer.parseInt(agName.substring(3)));
