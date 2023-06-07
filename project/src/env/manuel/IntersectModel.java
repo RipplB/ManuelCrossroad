@@ -24,7 +24,6 @@ class IntersectModel extends GridWorldModel {
         intersectModelView  = new IntersectModelView(this,"Pööööcs",600);
         this.setView(intersectModelView);
 
-
         //set Lamps
         //side 0 (TOP)
         this.set(RED,LaneLength,LaneLength-1 );
@@ -45,7 +44,6 @@ class IntersectModel extends GridWorldModel {
         this.set(RED,LaneLength-1 ,LaneLength+3 );
         this.set(RED,LaneLength-1 ,LaneLength+4 );
         this.set(RED,LaneLength-1 ,LaneLength+5 );
-
 
         //setWalls
         //top left
