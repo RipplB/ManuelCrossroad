@@ -23,6 +23,12 @@ lightOfLane(Side, Lane, Light)
         .nth(11, SortedValues, lightValue(Val, Side, Lane));
         lights(Side, Lane, green);
         ?lightOfLane(Side, Lane, Light);
+        .broadcast(tell, winner(Side, Lane));
         .send(Light, tell, green);
-        .wait(500);
+        .wait(2000);
+        !halt.
+
++!halt: true
+    <-  lights(0, 0, red);
+        .wait(2000);
         !run.

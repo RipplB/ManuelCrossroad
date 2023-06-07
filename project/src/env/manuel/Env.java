@@ -18,9 +18,9 @@ import java.util.logging.Logger;
 
 public class Env extends Environment {
 
-    static final int LANE_LENGTH = 4;
+    static final int LANE_LENGTH = 8;
     static final int SIZE = 2 * LANE_LENGTH + 6;
-    static final int NB_CARS = 12;
+    static final int NB_CARS = 20;
 
     private final Logger logger = Logger.getLogger("project."+Env.class.getName());
     private final Random random = new Random(System.currentTimeMillis());
@@ -53,8 +53,7 @@ public class Env extends Environment {
         }
         if (agName.contains("car")) {
             try {
-                long goodTimeout = 190 - 4 * LANE_LENGTH - 5 * NB_CARS;
-                Thread.sleep(Math.max(goodTimeout, 5L));
+                Thread.sleep(50);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
@@ -136,13 +135,15 @@ public class Env extends Environment {
     private boolean changeLight(String[] args) {
         if (args.length < 4)
             return false;
-        int side = Integer.parseInt(args[1]);
-        int lane = Integer.parseInt(args[2]);
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 3; j++) {
                 model.redLight(i, j);
             }
         }
+        if ("red".equals(args[3]))
+            return true;
+        int side = Integer.parseInt(args[1]);
+        int lane = Integer.parseInt(args[2]);
         model.greenLight(side, lane);
         return true;
     }

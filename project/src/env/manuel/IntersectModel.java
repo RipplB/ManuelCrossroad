@@ -78,4 +78,14 @@ class IntersectModel extends GridWorldModel {
         this.add(RED, gL.x, gL.y);
     }
 
+    @Override
+    public void setAgPos(int ag, Location l) {
+        Location oldLoc = getAgPos(ag);
+        agPos[ag] = l;
+        add(AGENT, l.x, l.y);
+        if (oldLoc != null) {
+            remove(AGENT, oldLoc.x, oldLoc.y);
+        }
+    }
+
 }
