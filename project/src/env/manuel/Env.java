@@ -6,6 +6,7 @@ import jason.asSyntax.Literal;
 import jason.asSyntax.Structure;
 import jason.environment.Environment;
 import jason.environment.grid.Location;
+import jason.runtime.RuntimeServices;
 import jason.runtime.Settings;
 
 import java.rmi.RemoteException;
@@ -149,9 +150,12 @@ public class Env extends Environment {
     }
 
     private void recreateCar(String agName) {
+        RuntimeServices rs = getEnvironmentInfraTier().getRuntimeServices();
         try {
-            getEnvironmentInfraTier().getRuntimeServices().killAgent(agName, null, 0);
-            Thread.sleep(50);
+            rs.killAgent(agName, null, 0);
+            while (!rs.getNewAgentName(agName).equals(agName)) {
+                Thread.sleep(2);
+            }
             logger.warning(() -> String.format("Killed %s", agName));
         } catch (RemoteException e) {
             throw new RuntimeException(e);
