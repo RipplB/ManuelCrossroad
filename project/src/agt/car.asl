@@ -45,24 +45,19 @@ next_lane(TargetLane)
     <-  !entry_xroad.
 
 +!proceed : pos(Side, Lane, Dist) & next_lane(DesiredLane) & Lane \== DesiredLane & not car(Side, DesiredLane, Dist, _)
-    <-  .print("Reeval pos from (", Side, ", ", Lane, ", ", Dist, ")");
-        move(Side, DesiredLane, Dist);
-        .print("New lane: ", DesiredLane);
+    <-  move(Side, DesiredLane, Dist);
         -+pos(Side, DesiredLane, Dist);
         !proceed.
 
 +!proceed : pos(Side, Lane, Dist) & xdistance(MaxDist) & Dist < MaxDist & NextDist = Dist + 1 & next_lane(DesiredLane)
     & not car(Side, Lane, NextDist, _) & (((green(Side, Lane) | NextDist < MaxDist) & DesiredLane == Lane) | (NextDist < MaxDist - 1))
-    <-  .print("Moving forwards from (", Side, ", ", Lane, ", ", Dist, ") to ", NextDist);
-        move(Side, Lane, NextDist);
-        .print("New pos (", Side, ", ", Lane, ", ", NextDist, ")");
+    <-  move(Side, Lane, NextDist);
         -+pos(Side, Lane, NextDist);
         !proceed.
 
 +!proceed : pos(Side, Lane, Dist) & NextDist = Dist + 1 & (car(Side, Lane, NextDist, _) | not green(Side, Lane))
     & next_lane(DesiredLane) & Lane == DesiredLane & value(CurrentValue) & Value = CurrentValue + 1 & lightOfLane(Side, Lane, Light)
     <-  sleep;
-        .print("Waiting for greenlight");
         .my_name(MyName);
         .send(Light, untell, value(MyName, CurrentValue));
         .send(Light, tell, value(MyName, Value));

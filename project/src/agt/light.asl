@@ -26,18 +26,19 @@ summarize_list(List, CurrentIndex, IncreasedAcc)
 summarize_list(List, Index, 0)
 :- .length(List, Index).
 
-+leave(Car) : greenBonus(GreenBonus) & ReducedGreenBonus = GreenBonus - 10
++leave(Car) : greenBonus(GreenBonus) & ReducedGreenBonus = GreenBonus - 3
     <-  .abolish(value(Car, _));
         .abolish(leave(Car));
         .max([ReducedGreenBonus, 0], ResultedGreenBonus);
         -+greenBonus(ResultedGreenBonus).
 
++green : true
+    <-  -+greenBonus(9); .abolish(green).
+
 
 +?lightValue(TotalValue, Side, Lane) : greenBonus(GreenBonus)
     <-  .findall(Val, value(_, Val), Values);
-        .print("lightValue values is ", Values);
         ?summarize_list(Values, CarValues);
-        .print("Created sum of ", CarValues);
         TotalValue = CarValues + GreenBonus;
         .my_name(MyName);
         ?laneOfLight(MyName, Side, Lane).

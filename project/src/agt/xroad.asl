@@ -1,3 +1,7 @@
+
+lightOfLane(Side, Lane, Light)
+:- NumberOfLight = 3 * Side + 2 - Lane + 1 & .concat("light", NumberOfLight, Light).
+
 !start.
 
 +!start: true <- start; !run.
@@ -16,11 +20,9 @@
         .send(light11, askOne, lightValue(_, _, _), Light11Value);
         .send(light12, askOne, lightValue(_, _, _), Light12Value);
         .sort([Light1Value, Light2Value, Light3Value, Light4Value, Light5Value, Light6Value, Light7Value, Light8Value, Light9Value, Light10Value, Light11Value, Light12Value], SortedValues);
-        //.sort([lightValue(10, 0, 0), lightValue(1, 2, 2)], SortedValues);
         .nth(11, SortedValues, lightValue(Val, Side, Lane));
-        // LightValue(Val, Side, Lane);
-        .print("Selected value from", SortedValues, " is", Val, " which is bound to side ", Side, " and lane ", Lane);
-        // .print("Selected ", LightValue);
         lights(Side, Lane, green);
-        .wait(2000);
+        ?lightOfLane(Side, Lane, Light);
+        .send(Light, tell, green);
+        .wait(500);
         !run.

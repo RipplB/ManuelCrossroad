@@ -18,9 +18,9 @@ import java.util.logging.Logger;
 
 public class Env extends Environment {
 
-    static final int LANE_LENGTH = 4;
+    static final int LANE_LENGTH = 10;
     static final int SIZE = 2 * LANE_LENGTH + 6;
-    static final int NB_CARS = 12;
+    static final int NB_CARS = 1;
 
     private final Logger logger = Logger.getLogger("project."+Env.class.getName());
     private final Random random = new Random(System.currentTimeMillis());
@@ -51,6 +51,12 @@ public class Env extends Environment {
             logger.info(() -> String.format("executing: %s, but not implemented!", action));
             return false;
         }
+        try {
+            long goodTimeout = 190 - 4 * LANE_LENGTH - 5 * NB_CARS;
+            Thread.sleep(Math.max(goodTimeout, 5L));
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
 
         //logger.info(() -> String.format("executing: %s", action));
 
@@ -63,12 +69,6 @@ public class Env extends Environment {
 
         updatePercepts();
         informAgsEnvironmentChanged();
-        try {
-            long goodTimeout = 190 - 4 * LANE_LENGTH - 5 * NB_CARS;
-            Thread.sleep(Math.max(goodTimeout, 5L));
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
         return result; // the action was executed with success
     }
 
@@ -138,7 +138,6 @@ public class Env extends Environment {
             return false;
         int side = Integer.parseInt(args[1]);
         int lane = Integer.parseInt(args[2]);
-        //String light = args[3];
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 3; j++) {
                 model.redLight(i, j);
@@ -155,7 +154,6 @@ public class Env extends Environment {
             while (!rs.getNewAgentName(agName).equals(agName)) {
                 Thread.sleep(2);
             }
-            //logger.warning(() -> String.format("Killed %s", agName));
         } catch (RemoteException e) {
             throw new RuntimeException(e);
         } catch (InterruptedException e) {
@@ -165,7 +163,6 @@ public class Env extends Environment {
     }
 
     private void updatePercepts() {
-        //clearAllPercepts();
         clearPercepts();
         perceptCars();
         perceptLights();
@@ -210,8 +207,6 @@ public class Env extends Environment {
             if (loc == null)
                 continue;
             LogicalCoordinate coor = LogicalCoordinate.of(loc);
-            int finalI = i;
-            //logger.info(() -> String.format("Car%d is now at (%d, %d, %d) from (%d ; %d)", finalI, coor.side, coor.lane, coor.distance, loc.x, loc.y));
             addPercept(Literal.parseLiteral(String.format("car(%d, %d, %d, car%d)", coor.side, coor.lane, coor.distance, i)));
         }
     }
