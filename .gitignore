@@ -24,3 +24,7 @@ gradle-app.setting
 
 # intellij
 .idea
+
+doc/*
+!doc/*.png
+!doc/*.tex
