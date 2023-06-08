@@ -1,4 +1,3 @@
-
 lightOfLane(Side, Lane, Light)
 :- NumberOfLight = 3 * Side + 2 - Lane + 1 & .concat("light", NumberOfLight, Light).
 
@@ -32,10 +31,6 @@ blocked_by(3, 0, [lane(0, 1), lane(0, 0), lane(1, 0), lane(1, 1), lane(2, 0)]).
         .sort([Light1Value, Light2Value, Light3Value, Light4Value, Light5Value, Light6Value, Light7Value, Light8Value, Light9Value, Light10Value, Light11Value, Light12Value], SortedValues);
         .broadcast(untell, halt);
         !turn_valid_green(SortedValues, 11, []);
-        // .nth(11, SortedValues, lightValue(Val, Side, Lane));
-        // lights(Side, Lane, green);
-        // ?lightOfLane(Side, Lane, Light);
-        // .send(Light, tell, green);
         .wait(2000);
         !halt.
 

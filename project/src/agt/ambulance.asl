@@ -1,7 +1,3 @@
-//pos(Side, Lane)
-//xdistance(Dist)
-
-
 lightOfLane(Side, Lane, Light)
 :- NumberOfLight = 3 * Side + 2 - Lane + 1 & .concat("light", NumberOfLight, Light).
 
