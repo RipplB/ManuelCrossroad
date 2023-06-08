@@ -17,7 +17,7 @@ class IntersectModel extends GridWorldModel {
         super(2*laneLength+6, 2*laneLength+6, numOfCars);
         this.laneLength = laneLength;
 
-        intersectModelView  = new IntersectModelView(this,"Smart Intersect",600,env);
+        intersectModelView  = new IntersectModelView(this,"Smart Intersect",900,env);
         this.setView(intersectModelView);
 
         //set Lamps

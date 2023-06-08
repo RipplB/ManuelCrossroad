@@ -9,7 +9,7 @@ lightOfLane(Side, Lane, Light)
 
 +!start : pos(Side, Lane, Dist) & lightOfLane(Side, Lane, Light) & .my_name(MyName)
     <-  .print("DID SOMEONE CALL AMBULANCE?????");
-        .send(Light, tell, value(MyName, 150));
+        .send(Light, tell, value(MyName, 4000));
         !proceed.
 
 
@@ -27,7 +27,7 @@ lightOfLane(Side, Lane, Light)
 
 +!entry_xroad : pos(Side, Lane, _) & lightOfLane(Side, Lane, Light)
     <-  .my_name(MyName);
-        .send(Light, untell, value(MyName, 150));
+        .send(Light, untell, value(MyName, 4000));
         !finish.
 
 +!finish : pos(Side, _, _)

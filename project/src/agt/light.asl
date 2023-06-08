@@ -1,5 +1,3 @@
-greenBonus(0).
-
 laneOfLight(light1, 0, 2).
 laneOfLight(light2, 0, 1).
 laneOfLight(light3, 0, 0).
@@ -26,15 +24,12 @@ summarize_list(List, CurrentIndex, IncreasedAcc)
 summarize_list(List, Index, 0)
 :- .length(List, Index).
 
-+leave(Car) : greenBonus(GreenBonus) & ReducedGreenBonus = GreenBonus - 3
++leave(Car) : true
     <-  .abolish(value(Car, _));
-        .abolish(leave(Car));
-        .max([ReducedGreenBonus, 0], ResultedGreenBonus);
-        -+greenBonus(ResultedGreenBonus).
+        .abolish(leave(Car)).
 
 +green : true
-    <-  -+greenBonus(9);
-        .abolish(green);
+    <-  .abolish(green);
         .my_name(MyName);
         ?laneOfLight(MyName, Side, Lane);
         .broadcast(untell, red(Side, Lane));
@@ -48,9 +43,9 @@ summarize_list(List, Index, 0)
         .broadcast(untell, green(Side, Lane)).
 
 
-+?lightValue(TotalValue, Side, Lane) : greenBonus(GreenBonus)
++?lightValue(TotalValue, Side, Lane) : true
     <-  .findall(Val, value(_, Val), Values);
         ?summarize_list(Values, CarValues);
-        TotalValue = CarValues + GreenBonus;
+        TotalValue = CarValues;
         .my_name(MyName);
         ?laneOfLight(MyName, Side, Lane).
