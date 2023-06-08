@@ -80,11 +80,8 @@ public class IntersectModelView extends GridWorldView {
     }
 
     public void drawAmbulance(Graphics g, int x, int y) {
-        g.setColor(Color.yellow);
-        g.drawRect(x * cellSizeW + 2, y * cellSizeH + 2, cellSizeW - 4, cellSizeH - 4);
-        g.setColor(Color.pink);
-        g.drawLine(x * cellSizeW + 2, y * cellSizeH + 2, (x + 1) * cellSizeW - 2, (y + 1) * cellSizeH - 2);
-        g.drawLine(x * cellSizeW + 2, (y + 1) * cellSizeH - 2, (x + 1) * cellSizeW - 2, y * cellSizeH + 2);
+        g.setColor(new Color(247,143,7));
+        g.fillOval(x * cellSizeW+2,y * cellSizeH+2,cellSizeW - 4,cellSizeH - 4);
     }
 
     public void drawRedLamp(Graphics g, int x, int y) {
