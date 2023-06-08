@@ -10,11 +10,18 @@ import java.awt.*;
 public class IntersectModelView extends GridWorldView {
 
     Env env;
+    JButton[] buttons;
 
     public IntersectModelView(GridWorldModel model, String title, int windowSize,Env env) {
         super(model, title, windowSize);
-        setVisible(true);
         this.env = env;
+        env.ambulanceExitSignal = () -> {
+            for (JButton button :
+                    buttons) {
+                button.setEnabled(true);
+            }
+        };
+        setVisible(true);
         repaint();
     }
 
@@ -39,7 +46,7 @@ public class IntersectModelView extends GridWorldView {
        controlPanel.add(butt4);
        getContentPane().add(BorderLayout.SOUTH, controlPanel);
 
-       JButton[] buttons = {butt1, butt2, butt3, butt4};
+       buttons = new JButton[]{butt1, butt2, butt3, butt4};
        for (int i = 0; i < 4; i++) {
            int finalI = i;
            buttons[i].addActionListener(event -> {
@@ -50,6 +57,7 @@ public class IntersectModelView extends GridWorldView {
                env.initAmbulance(finalI);
            });
        }
+
     }
 
 
@@ -72,10 +80,9 @@ public class IntersectModelView extends GridWorldView {
     }
 
     public void drawAmbulance(Graphics g, int x, int y) {
-        g.setColor(Color.gray);
-        g.fillRect(x * cellSizeW, y * cellSizeH, cellSizeW, cellSizeH);
-        g.setColor(Color.pink);
+        g.setColor(Color.yellow);
         g.drawRect(x * cellSizeW + 2, y * cellSizeH + 2, cellSizeW - 4, cellSizeH - 4);
+        g.setColor(Color.pink);
         g.drawLine(x * cellSizeW + 2, y * cellSizeH + 2, (x + 1) * cellSizeW - 2, (y + 1) * cellSizeH - 2);
         g.drawLine(x * cellSizeW + 2, (y + 1) * cellSizeH - 2, (x + 1) * cellSizeW - 2, y * cellSizeH + 2);
     }

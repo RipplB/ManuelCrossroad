@@ -21,12 +21,18 @@ public class Env extends Environment {
     static final int LANE_LENGTH = 12;
     static final int SIZE = 2 * LANE_LENGTH + 6;
     static final int NB_CARS = 40;
+    static final String AMBULANCE_NAME = "ambulance";
 
     private final Logger logger = Logger.getLogger("project."+Env.class.getName());
     private final Random random = new Random(System.currentTimeMillis());
     private final Map<String, Function<String[], Boolean>> actions;
 
+    Runnable ambulanceExitSignal;
+
     private IntersectModel model;
+
+    private Location ambulanceLocation;
+    private int ambulanceTarget;
 
     public Env() {
         actions = new HashMap<>();
@@ -88,20 +94,26 @@ public class Env extends Environment {
         int lane = Integer.parseInt(args[2]);
         int dist = Integer.parseInt(args[3]);
         Location newLocation = logicalCoordinateToModelCoordinate(side, lane, dist);
-        if (model.getAgAtPos(newLocation) > -1) {
+        if (model.getAgAtPos(newLocation) > -1 || newLocation.equals(ambulanceLocation)) {
             logger.severe("There is something blocking the way");
             return false;
         }
-        model.setNewPos(newLocation.x, newLocation.y, args[0]);
+        if (args[0].contains("car")) {
+            model.setNewPos(newLocation.x, newLocation.y, args[0]);
+            return true;
+        }
+        model.moveAmbulance(ambulanceLocation, newLocation);
+        ambulanceLocation = newLocation;
         return true;
     }
 
     private boolean finisherMoves(String[] args) {
         if (args.length < 2)
             return false;
+        boolean isAmbulance = args[0].equals(AMBULANCE_NAME);
         int side = Integer.parseInt(args[1]);
-        int target = Integer.parseInt(args[2]);
-        Location currentPosition = model.getAgPos(Integer.parseInt(args[0].substring(3)));
+        int target = isAmbulance ? ambulanceTarget : Integer.parseInt(args[2]);
+        Location currentPosition = isAmbulance ? ambulanceLocation : model.getAgPos(Integer.parseInt(args[0].substring(3)));
         Location targetPosition = switch (side) {
             case 0 -> {
                 int desiredY = target == 2 ? SIZE : LANE_LENGTH + (target == 1 ? 3 : 0);
@@ -120,14 +132,32 @@ public class Env extends Environment {
                 yield currentPosition.x < desiredX ? new Location(currentPosition.x + 1, currentPosition.y) : new Location(currentPosition.x, currentPosition.y + (target - 1));
             }
         };
-        if (model.getAgAtPos(targetPosition) > -1 || model.hasObject(IntersectModel.RED, currentPosition)) {
+        if (model.getAgAtPos(targetPosition) > -1 || model.hasObject(IntersectModel.RED, currentPosition) || targetPosition.equals(ambulanceLocation)) {
             logger.warning("There is something blocking the way");
             return false;
         }
-        if (!model.inGrid(targetPosition))
-            recreateCar(args[0]);
-        else
-            model.setNewPos(targetPosition.x, targetPosition.y, args[0]);
+        if (!model.inGrid(targetPosition)) {
+            if (!isAmbulance)
+                recreateCar(args[0]);
+            else {
+                model.moveAmbulance(ambulanceLocation, null);
+                ambulanceLocation = null;
+                ambulanceExitSignal.run();
+                try {
+                    getEnvironmentInfraTier().getRuntimeServices().killAgent(AMBULANCE_NAME, null, 0);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+        else {
+            if (!isAmbulance)
+                model.setNewPos(targetPosition.x, targetPosition.y, args[0]);
+            else {
+                model.moveAmbulance(ambulanceLocation, targetPosition);
+                ambulanceLocation = targetPosition;
+            }
+        }
         return true;
     }
 
@@ -192,15 +222,17 @@ public class Env extends Environment {
 
     public void initAmbulance(int side) {
         int lane = random.nextInt(3);
-        Location location = logicalCoordinateToModelCoordinate(side, lane, 0);
-        model.moveAmbulance(location);
+        int potentialTarget = side + lane + 1;
+        ambulanceTarget = potentialTarget > 3 ? potentialTarget - 4 : potentialTarget;
+        ambulanceLocation = logicalCoordinateToModelCoordinate(side, lane, 0);
+        model.moveAmbulance(null, ambulanceLocation);
         Settings settings = new Settings();
         String beliefs = String.format("pos(%d,%d,0), xdistance(%d)", side, lane, LANE_LENGTH);
-        logger.info(() -> String.format("Creating amb with %s which is on %d %d", beliefs, location.x, location.y));
+        logger.info(() -> String.format("Creating amb with %s which is on %d %d", beliefs, ambulanceLocation.x, ambulanceLocation.y));
         settings.addOption(Settings.INIT_BELS, beliefs);
         try {
             String newAgentName = getEnvironmentInfraTier().getRuntimeServices()
-                    .createAgent("ambulance", "ambulance.asl", null, null, null, settings, null);
+                    .createAgent(AMBULANCE_NAME, "ambulance.asl", null, null, null, settings, null);
             getEnvironmentInfraTier().getRuntimeServices().startAgent(newAgentName);
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -228,6 +260,10 @@ public class Env extends Environment {
             LogicalCoordinate coor = LogicalCoordinate.of(loc);
             addPercept(Literal.parseLiteral(String.format("car(%d, %d, %d, car%d)", coor.side, coor.lane, coor.distance, i)));
         }
+        if (ambulanceLocation == null)
+            return;
+        LogicalCoordinate coor = LogicalCoordinate.of(ambulanceLocation);
+        addPercept(Literal.parseLiteral(String.format("car(%d, %d, %d, ambulance)", coor.side, coor.lane, coor.distance)));
     }
 
 }

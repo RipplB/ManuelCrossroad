@@ -12,7 +12,6 @@ class IntersectModel extends GridWorldModel {
 
     private final int laneLength;
 
-    private Location ambulanceLocation;
 
     IntersectModel(int laneLength, int numOfCars,Env env) {
         super(2*laneLength+6, 2*laneLength+6, numOfCars);
@@ -56,15 +55,11 @@ class IntersectModel extends GridWorldModel {
         this.addWall(laneLength+6,laneLength+6,2*laneLength+5,2*laneLength+5);
     }
 
-    void moveAmbulance(Location nextLocation) {
-        add(AMBULANCE, nextLocation);
-        if (ambulanceLocation != null)
-            remove(AMBULANCE, ambulanceLocation);
-        ambulanceLocation = nextLocation;
-    }
-
-    void resetAmbulance() {
-        ambulanceLocation = null;
+    void moveAmbulance(Location fromLocation, Location nextLocation) {
+        if (nextLocation != null)
+            add(AMBULANCE, nextLocation);
+        if (fromLocation != null)
+            remove(AMBULANCE, fromLocation);
     }
 
     void setNewPos(int x, int y, String agentName){
