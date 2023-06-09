@@ -167,7 +167,54 @@ Modell manipulálásáért felelős osztály, amely leszármazik a GridWorldMode
 
 \section{A rendszer ismertetése}
 \subsection{A felhasználói interfész}
+A programnak nincsen futási időben módosítható paramétere, az autók számát, a sávok hosszát illetve a
+járművek akciói közt eltelt időt fordítási időben tudjuk beállítani.
+A felhasználói felület a jason által beépítetten támogatott GridWorldViewra épül. Mivel a GridWorldModelt
+használjuk a modellezésre, a GridWorldView rengeteg alap funkciót automatikusan megvalósít, nekünk csak
+a módosítani kívánt megjelenítést kellett felülírnunk.
+
+A felületen található még 4 gomb, amelyekkel a mentőautót tudjuk megjeleníteni a kívánt oldalon. A gombok
+bármelyik megnyomása után tiltott állapotba kerülnek, ezzel garantálva, hogy adott időpillanatban
+csak egy mentőautó található a modellben. Természetesen amint a születő mentőautó teljesíti feladatát,
+elhagyja a világot és megsemmisítésre kerül, a gombok újra aktívvá válnak, készen állva a következő
+mentőautó bevetésének megkezdésére.
 \subsection{Az ágensprogramok BDI összefoglalása}
+\subsubsection{A járművek BDI szempontból}
+A járművek abszolút célvezérelt ágensek. Születésük után feltöltésre kerül a kezdeti hiedelem táruk,
+(belief base) és egyből ellátjuk őket egy kívánt céllal is. A cél teljesítésése során az autók két szándékkal
+rendelkeznek: a sikeres sávváltás, illetve az előre haladás. Ezek ilyen sorrendben élveznek prioritást.
+Amint a megfelelő sávba kerül az autó, egyetlen szándék következik a célból, az előrehaladás.
+
+Működésük során a hiedelemtáruk több módon is bővül. A többi autó érzékelése érzék forrású hiedelmekkel
+bővíti a tárat. Ha elérik a piros lámpát, saját maguk frissítik be az értékükről alkotott hiedelmüket.
+A lámpák állapotáról pedig kommunikáció folytán értesülnek.
+
+\subsubsection{A lámpák BDI szempontból}
+A lámpák a járművekkel szemben kizárólag kommunikáció vezérelt ágensek. Nincsen meghatározott céljuk,
+szándékuk mindig a járművektől vagy a központtól érkező kommunikáció fogadása és megfelelő feldolgozása.
+Éppen ezért az ASL programjában nem is található teljesítménycél létrehozása, illetve arra való terv sem.
+
+A lámpa kezdeti hiedelemtárja csak a saját sávjának azonosítására szolgál. Ezután a sávba érkező autók
+értékével telik meg sorra.
+
+Több terv található a kommunikációra épülve. A lámpa tudja fogadni az járművektől azt az információt, hogy
+sikeresen beléptek a kereszteződésbe, ekkor törli a saját hiedelemtárjából az adott jármű értékét.
+
+Ezen kívül reagál a központ által érkező összes utasításra, amik alapján zöldre vagy pirosra váltja magát.
+Illetve kérés esetén válaszol az összegyűlt autók értékével.
+
+\subsubsection{A központ BDI szempontból}
+A központ kezdeti hiedelemtára szintén csak szabályokkal van tele, amiket fel tud használni a különböző
+kalkulációk során. A központ ezután két cél között váltogat: a kereszteződés teljes megállítása, illetve
+aukció kihírdetése a zöldre váltáshoz. Miután a központ bekérte az összes lámpa licitjét, felállít egy sorrendet
+köztük. Ezután végigmegy a győztestől a vesztes felé. Minden lámpát, aki adott be érvényes licitet, és
+a lámpa által feloldott útja nem keresztezi az aktuális aukcióban már engedélyezett lámpák útját, engedélyez,
+és az adott lámpa útjait felveszi a listába, a további ellenőrzés érdekében.
+
+Tehát a központ célja minél több lámpa zöldre váltása, és ennek érdekében szándéka minden lámpát megvizsgálni,
+és lehetőség szerint engedélyezni. Tiltó állapotban pedig célja az összes lámpa letiltása, és az egyetlen érvényes
+szándéka ezt valósítja meg.
 \subsection{A MAS összefoglalása}
+
 
 \end{document}
