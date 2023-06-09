@@ -30,7 +30,7 @@
 \newpage
 
 \section{A választott feladat leírása}
-Házifeladatunkként egy intelligens kereszteződést valósítottunk meg.
+Házi feladatunkként egy intelligens kereszteződést valósítottunk meg.
 A kereszteződésben kizárólag gépkocsi forgalom megengedett, tehát zebrák nincsenek.
 4 irányból érkezhetnek az autók, aszinkron módon, ezek mindegyike egy ágens,
 amelyek kommunikálnak egymással. Amint kilép egy ilyen ágens a képernyőről, egy másik,
@@ -58,28 +58,28 @@ A mentőautó alapszíne narancssárgás.
 Az autó ágensek célja a véletlenszerű születési pontból biztonságosan és szabályosan eljutni a céloldalra.
 Indulás után elkezdenek haladni a kereszteződés felé, miközben folyamatosan figyelik, át tudnak-e sorolni
 a megfelelő sávba. Ez élvez prioritást, tehát ha egy autó ágens a balra kanyarodó sávban tartózkodik, de
-az ő célja a szembe oldal, tehát a középső, egyenesen tartó sávban kell belépjen a kereszteződésbe, akkor
-ha van lehetősége inkább sávot fog váltani, mint előre haladni.
+az ő célja a szemben lévő oldal, tehát a középső, egyenesen tartó sávban kell belépjen a kereszteződésbe, akkor
+ha van lehetősége, inkább sávot fog váltani, mint előre haladni.
 
 Az autó ágensek feltétlen célja az ütközés elkerülése. Amennyiben nem kell sávot váltani, vagy éppen nem
 lehet mert van egy másik autó ágens az adott sávban, illetve az ágens előtt is, vagy a piros lámpa, az ágens
 tehetetlenül megáll, és addig vár, amíg nem szabadul fel valamelyik helyzet.
 
 Miután az autó ágens sikeresen
-bejut a kereszteződésbe, már nincs értelme tovább gondolkodnia, a ráfutást elkerülve ugyan, de már csak 
+bejut a kereszteződésbe, már nincs értelme tovább gondolkodnia, a ráfutást elkerülve ugyan, de már csak
 elhagyja a kereszteződést. Ha az ágens elérte végső célját, a modellezett terület szélét a megfelelő oldalon,
 megsemmisítésre kerül, és helyébe új születik.
 
 Az autók darabszáma fordítási időben módosítható paraméter.
 	
 \subsubsection{Lámpa ágens}
-A lámpa ágensek megfelelő jelzések esetén pirosra, illetve zöldre váltanak, ezzel átengedve vagy megállítva az érkező járműveket.
-Feladatuk még a sávjukban felgyűlt autók értékeinek aggregálása, majd a kapott érték meglicitálása a 
+A lámpa ágensek megfelelő jelzések esetén pirosra, illetve zöldre váltanak, ezzel megállítva vagy átengedve az érkező járműveket.
+Feladatuk még a sávjukban felgyűlt autók értékeinek aggregálása, majd a kapott érték meglicitálása a
 hirdetett aukciókon. Egyfajta híd szerepet töltenek be a központ és az autók között.
 
-Lámpa ágensből minden sávhoz tartozik egy, tehát fixen 9 darab található meg a szervezetben.
+Lámpa ágensből minden sávhoz tartozik egy, tehát fixen 12 darab található meg a szervezetben.
 \subsubsection{Vezérlő ágens}
-A vezérlő ágens feladata a kereszteződés irányitási ciklusának meghatározása. Megadott időközönként
+A vezérlő ágens feladata a kereszteződés irányítási ciklusának meghatározása. Megadott időközönként
 tiltó jelet küld minden lámpának, ezzel felkészítve a kereszteződést egy újabb zöldhullámra.
 Mikor lejár a türelmi időszak, aukciót hirdet a lámpák között. Az aukció nyertese feltétlenül jogosult
 lesz zöldre váltani.
@@ -89,18 +89,17 @@ Az aukción részt vevő lámpákat a licitjükben nézve sorban engedélyezi, h
 nem keresztezi egyik, már engedélyezett lámpának a forgalmát sem.
 \subsubsection{Mentőautó ágens}
 A modellezett környezet kritikus eseménye egy megkülönböztetett jármű, a mentőautó megjelenése.
-Az ágens sokmindenben megegyezik az autó ágenssel: ugyanaz a célja és nagyon hasonló a mozgása, bár jóval
+Az ágens sok mindenben megegyezik az autó ágenssel: ugyanaz a célja és nagyon hasonló a mozgása, bár jelentősen
 gyorsabb.
 
 A különbség a lámpához való bejelentkezésben rejlik. A mentőautó esetében nem foglalkozunk azzal,
-hogy mióta áll a pirosnál, hanem sokkal nagyobb értékben vesszük figyelembe, ezzel szinte garantálva, hogy mielőbb
+hogy mióta áll a pirosnál, hanem sokkal nagyobb értékben vesszük figyelembe, ezzel garantálva, hogy mielőbb
 átjuthasson a kereszteződésen.
 
 Mentőautó ágensből kizárólag egy szerepelhet egyidőben a modellben.
-
 \subsection{Ágensek közötti kapcsolatok}
 A járművek helymeghatározó rendszerrel vannak ellátva, amik sugározzák a jármű adott pozícióját. Így
-a járművek helyzetét minden ágens érzékelni tudja a környzetből.
+a járművek helyzetét minden ágens érzékelni tudja a környezetből.
 
 A járművek direkt kommunikációt alkalmaznak az értékük (autók esetében várakozási idejük, mentőautó
 esetén egy fix, magas érték) közlésére. Konkrétan a sávjukhoz tartozó lámpának címezve üzenik meg azt,
@@ -108,7 +107,7 @@ amit a lámpák fogadnak és feltétlenül elhisznek.
 
 A lámpák és a központ között többféle kommunikáció is megvalósul.
 
-A központ broadcast üzenetben közli a lámpákkal, amikor pirosra kell váltani, majd direkt 
+A központ broadcast üzenetben közli a lámpákkal, amikor pirosra kell váltani, majd direkt
 kommunikációt alkalmazva értesíti azokat, akik zöldre válthatnak.
 
 Az aukció meghirdetése egy kérdés formájában zajlik. A lámpa ágensek erre a kérdésre válaszolva
@@ -159,7 +158,7 @@ A járművek inicializálása során beállítjuk a kezdeti tudásukat véletlen
 ellátjuk őket azzal a fontos információval, hogy milyen hosszúak is a sávok.
 
 \paragraph{LogicalCoordinate.java}
-Ebben az osztályban váltjuk át a modellbeli Location objektumokat, amely két Integert tartalmaz, x-et és y-t. Így lesznek a koordinátákból side, lane, distance hármasok.
+Ebben az osztályban váltjuk át a modellbeli Location objektumokat, amelyek két Integert tartalmaznak, x-et és y-t. Így lesznek a koordinátákból side, lane, distance hármasok.
 \paragraph{IntersectModelView.java}
 A felhasználói interface megjelenítéséért felelős. Az osztály leszármazik a GridWorldView-ból, és annak az initComponents() függvényét felülírva jelenítjük meg a grafikus felhasználói felületet, rajta a 4 darab gombbal, illetve magával a modellel. Ezen osztályban definiáljuk a lámpák rajzolásához szükséges függvényeket is.
 \paragraph{IntersectModel.java}
@@ -181,8 +180,8 @@ mentőautó bevetésének megkezdésére.
 \subsection{Az ágensprogramok BDI összefoglalása}
 \subsubsection{A járművek BDI szempontból}
 A járművek abszolút célvezérelt ágensek. Születésük után feltöltésre kerül a kezdeti hiedelem táruk,
-(belief base) és egyből ellátjuk őket egy kívánt céllal is. A cél teljesítésése során az autók két szándékkal
-rendelkeznek: a sikeres sávváltás, illetve az előre haladás. Ezek ilyen sorrendben élveznek prioritást.
+(belief base) és egyből ellátjuk őket egy kívánt céllal is. A cél teljesítése során az autók két szándékkal
+rendelkeznek: a sikeres sávváltás, illetve az előrehaladás. Ezek ilyen sorrendben élveznek prioritást.
 Amint a megfelelő sávba kerül az autó, egyetlen szándék következik a célból, az előrehaladás.
 
 Működésük során a hiedelemtáruk több módon is bővül. A többi autó érzékelése érzék forrású hiedelmekkel
@@ -194,22 +193,22 @@ A lámpák a járművekkel szemben kizárólag kommunikáció vezérelt ágensek
 szándékuk mindig a járművektől vagy a központtól érkező kommunikáció fogadása és megfelelő feldolgozása.
 Éppen ezért az ASL programjában nem is található teljesítménycél létrehozása, illetve arra való terv sem.
 
-A lámpa kezdeti hiedelemtárja csak a saját sávjának azonosítására szolgál. Ezután a sávba érkező autók
+A lámpa kezdeti hiedelemtára csak a saját sávjának azonosítására szolgál. Ezután a sávba érkező autók
 értékével telik meg sorra.
 
 Több terv található a kommunikációra épülve. A lámpa tudja fogadni az járművektől azt az információt, hogy
-sikeresen beléptek a kereszteződésbe, ekkor törli a saját hiedelemtárjából az adott jármű értékét.
+sikeresen beléptek a kereszteződésbe, ekkor törli a saját hiedelemtárából az adott jármű értékét.
 
-Ezen kívül reagál a központ által érkező összes utasításra, amik alapján zöldre vagy pirosra váltja magát.
-Illetve kérés esetén válaszol az összegyűlt autók értékével.
+Ezen kívül reagál a központ által érkező összes utasításra, amik alapján zöldre vagy pirosra váltja magát,
+illetve kérés esetén válaszol az összegyűlt autók értékével.
 
 \subsubsection{A központ BDI szempontból}
-A központ kezdeti hiedelemtára szintén csak szabályokkal van tele, amiket fel tud használni a különböző
+A központ kezdeti hiedelemtára szintén csak szabályokat tartalmaz, amiket fel tud használni a különböző
 kalkulációk során. A központ ezután két cél között váltogat: a kereszteződés teljes megállítása, illetve
-aukció kihírdetése a zöldre váltáshoz. Miután a központ bekérte az összes lámpa licitjét, felállít egy sorrendet
+aukció kihirdetése a zöldre váltáshoz. Miután a központ bekérte az összes lámpa licitjét, felállít egy sorrendet
 köztük. Ezután végigmegy a győztestől a vesztes felé. Minden lámpát, aki adott be érvényes licitet, és
 a lámpa által feloldott útja nem keresztezi az aktuális aukcióban már engedélyezett lámpák útját, engedélyez,
-és az adott lámpa útjait felveszi a listába, a további ellenőrzés érdekében.
+és az adott lámpa útjait felveszi a listába a további ellenőrzés érdekében.
 
 Tehát a központ célja minél több lámpa zöldre váltása, és ennek érdekében szándéka minden lámpát megvizsgálni,
 és lehetőség szerint engedélyezni. Tiltó állapotban pedig célja az összes lámpa letiltása, és az egyetlen érvényes
